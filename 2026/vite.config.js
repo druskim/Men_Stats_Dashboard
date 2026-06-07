@@ -3,5 +3,5 @@ import react from '@vitejs/plugin-react'
 
 export default defineConfig({
   plugins: [react()],
-  base: '/Men_stats_dashboard/2026/',
+  base: '/Men_Stats_Dashboard/2026/',
 })
