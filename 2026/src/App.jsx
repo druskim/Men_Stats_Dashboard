@@ -86,6 +86,7 @@ export default function App() {
   const offensePenalties = useMemo(() => filtered.filter(r => r.isCanadaAttack && r.isPenalty), [filtered])
   const defensePenalties = useMemo(() => filtered.filter(r => !r.isCanadaAttack && r.isPenalty), [filtered])
   const offenseShotsAll = useMemo(() => filtered.filter(r => r.isCanadaAttack), [filtered])
+  const defenseShotsAll = useMemo(() => filtered.filter(r => !r.isCanadaAttack && !r.isOwnGoal), [filtered])
 
   const offenseStats = useMemo(() => computeOffensiveStats(offenseShots), [offenseShots])
   const defenseStats = useMemo(() => computeDefensiveStats(defenseShots), [defenseShots])
@@ -164,7 +165,7 @@ export default function App() {
 
       <main className="tab-content">
         {activeTab === 'Overview' && (
-          <OverviewTab offenseShots={offenseShots} defenseShots={defenseShots} allRows={filtered} />
+          <OverviewTab offenseShots={offenseShotsAll} defenseShots={defenseShotsAll} allRows={filtered} />
         )}
         {activeTab === 'Offense' && (
           <OffenseTab shots={offenseShots} activeOrigin={filters.shotOrigin} onPositionClick={handlePositionClick} activeLocation={filters.shotLocation} onLocationClick={handleLocationClick} />
