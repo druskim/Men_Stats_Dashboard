@@ -43,23 +43,47 @@ const OUTPUT_FIELDS = [
 ]
 
 // Extract opponent and tournament label from filename.
-// Standard format: Canada_OPPONENT_G#_TOURNAMENT_YEAR.xlsx
-// e.g. Canada_Korea_G1_IBSA_Americas_2026.xlsx
-//   → opponent: Korea, tournament: IBSA Americas G1 2026
+//
+// New format: TEAMA_TEAMB_GameType_Tournament_Year_Gender.xlsx
+//   Canada can be in either position; identified by the 'CAN' code.
+//   e.g. CAN_TUR_Preliminary_Worlds_2026_M.xlsx
+//     → opponent: TUR, tournament: Worlds Preliminary 2026 M
+//
+// Legacy format: Canada_OPPONENT_G#_TOURNAMENT_YEAR.xlsx
+//   e.g. Canada_Korea_G1_IBSA_Americas_2026.xlsx
+//     → opponent: Korea, tournament: IBSA Americas G1 2026
 function extractGameInfo(filename) {
   const base = filename.replace(/\.(xlsx|xls)$/i, '').replace(/^~\$/, '')
   const parts = base.split('_')
 
+  // New format: last part is gender (M/W), second-to-last is a 4-digit year
+  if (
+    parts.length >= 5 &&
+    /^[mw]$/i.test(parts[parts.length - 1]) &&
+    /^\d{4}$/.test(parts[parts.length - 2])
+  ) {
+    const teamA = parts[0].toUpperCase()
+    const teamB = parts[1].toUpperCase()
+    const opponent = teamA === 'CAN' ? teamB : teamA
+    const gameType = parts[2]
+    const year = parts[parts.length - 2]
+    const gender = parts[parts.length - 1].toUpperCase()
+    const tournamentParts = parts.slice(3, parts.length - 2)
+    const tournament = [...tournamentParts, gameType, year, gender].join(' ')
+    return { opponent, tournament }
+  }
+
+  // Legacy format: Canada_OPPONENT_G#_TOURNAMENT_YEAR.xlsx
   if (parts.length >= 4 && parts[0].toLowerCase() === 'canada') {
     const opponent = parts[1]
     const gameNum = parts[2]                          // e.g. G1, G2
-    const year = parts[parts.length - 1]             // last segment
+    const year = parts[parts.length - 1]
     const tournamentParts = parts.slice(3, parts.length - 1)
     const tournament = [...tournamentParts, gameNum, year].join(' ')
     return { opponent, tournament }
   }
 
-  // Fallback for legacy Canada_vs_Opponent format
+  // Fallback
   const vsMatch = base.match(/[Vv][Ss][_ ]([^_]+)/i)
   const opponent = vsMatch ? vsMatch[1] : 'Unknown'
   const afterOpponent = vsMatch

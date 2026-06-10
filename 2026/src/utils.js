@@ -1,4 +1,4 @@
-export const CANADA_PLAYERS = ['Blair Nesbitt', 'Mason Smith', 'Harry Nickerson', 'Rakibul Karim', 'Peter Parsons', 'Nick Gentleman']
+export const CANADA_PLAYERS = ['Blair', 'Harry', 'Mason', 'Nick', 'Peter', 'Raki']
 
 export const OUTCOME_GROUPS = {
   CANADA_GOAL: ['Goal Canada'],
