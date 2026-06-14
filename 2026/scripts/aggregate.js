@@ -64,7 +64,7 @@ function extractGameInfo(filename) {
   ) {
     const teamA = parts[0].toUpperCase()
     const teamB = parts[1].toUpperCase()
-    const opponent = teamA === 'CAN' ? teamB : teamA
+    const opponent = /^CAN(ADA)?$/i.test(teamA) ? teamB : teamA
     const gameType = parts[2]
     const year = parts[parts.length - 2]
     const gender = parts[parts.length - 1].toUpperCase()
